@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Regiones aria-live en frameworks de JavaScript</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+      rel="stylesheet"
+    />
+    <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&family=Ubuntu+Mono&display=swap" rel="stylesheet">
+    <link
+      href="https://unpkg.com/prismjs@1.20.0/themes/prism-okaidia.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/styles.css" />
+    <link rel="icon" href="/assets/images/logo-lm.svg" />
+    <link
+      rel="icon"
+      href="/assets/images/logo-dm.svg"
+      media="(prefers-color-scheme: dark)"
+    />
+  </head>
+  <body>
+    <main tabindex="0">
+      <section>
+        <div class="wrapper flow | text-center center-vertically">
+          <h1>Regiones aria-live en frameworks de JavaScript</h1>
+          <p><strong>Por:</strong> Cristian Díaz</p>
+          <p>
+            <a target="_blank" href="https://www.itscrisdiaz.com/"
+              >itscrisdiaz.com</a
+            >
+            |
+            <a target="_blank" href="https://accesibilidadweb.today/"
+              >accesibilidadweb.today</a
+            >
+            |
+            <a target="_blank" href="https://twitter.com/ItsCrisDiaz"
+              >@ItsCrisDiaz</a
+            >
+          </p>
+        </div>
+      </section>
+      <section>
+        <div class="wrapper flow | center-vertically center-horizontally">
+          <h2>Contenido</h2>
+          <ul class="flow">
+            <li>¿Qué es un live region?</li>
+            <li>Tipos de live region</li>
+            <li>Herramientas de frameworks de JavaScript</li>
+            <li>Implementación y evaluación de efectividad</li>
+          </ul>
+        </div>
+      </section>
+      <section>
+        <div class="wrapper columns">
+          <div class="flow center-vertically">
+            <h2>¿Qué es una live region?</h2>
+            <p>
+              Es una combinación de markup de propiedades y atributos de ARIA
+              que permiten que el contenido que se inyecte dentro de este sea
+              anunciado por un lector de pantalla.
+            </p>
+            <p>Esto es útil para casos como:</p>
+            <ul class="flow">
+              <li>Notificaciones</li>
+              <li>Pantallas de carga</li>
+              <li>
+                Anunciar cambios en pantalla que no serían perceptibles para
+                usuarios de pantalla de otra manera.
+              </li>
+            </ul>
+          </div>
+          <div class="flow center-vertically">
+            <img
+              src="https://miro.medium.com/max/1400/1*FKBM6mtZlboou8AHhGjqpQ.png"
+              alt="Un mensaje de notificación"
+            />
+          </div>
+        </div>
+      </section>
+      <section>
+        <div class="wrapper flow | center-vertically center-horizontally">
+          <h2 class="text-center">Atributos de una live region</h2>
+          <ul class="flow">
+            <li><code>aria-live</code></li>
+            <li><code>aria-atomic</code></li>
+            <li><code>aria-relevant</code></li>
+          </ul>
+          <p>
+            El uso de cualquier rol de ARIA que funcione como live region va a
+            llevar una combinación de estas propiedades de forma intrínseca.
+          </p>
+        </div>
+      </section>
+      <section>
+        <div class="wrapper columns">
+          <div class="flow center-vertically">
+            <h3><code>aria-live</code></h3>
+            <p>
+              Determina <strong>cuándo</strong> se va a anunciar el contenido
+              que se inyecta dentro de la live region
+            </p>
+            <table>
+              <caption>
+                Atributos de
+                <code>aria-live</code>
+              </caption>
+              <thead>
+                <tr>
+                  <th scope="col">Atributo</th>
+                  <th scope="col">Significado</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <th scope="row"><code>polite</code></th>
+                  <td>
+                    Anuncia el contenido después de que todo el contenido que
+                    anuncia un lector de pantalla se anuncia.
+                  </td>
+                </tr>
+                <tr>
+                  <th scope="row"><code>assertive</code></th>
+                  <td>
+                    Anuncia el contenido inmediatamente, interrumpiendo acciones
+                    que hace el lector de pantalla.
+                  </td>
+                </tr>
+                <tr>
+                  <th scope="row"><code>off</code></th>
+                  <td>No anuncia el contenido.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="flow center-vertically">
+{% highlight "markup" %}
+<div aria-polite="polite">
+  <p>Tu mensaje ha sido enviado</p>
+</div>
+{% endhighlight %}
+          </div>
+        </div>
+      </section>
+      <section>
+        <div class="wrapper columns">
+          <div class="flow center-vertically">
+            <h3><code>aria-atomic</code></h3>
+            <p>Determina <strong>cómo</strong> va a ser anunciado el contenido que se agregue al live region.</p>
+            <table>
+              <caption>
+                Atributos de
+                <code>aria-atomic</code>
+              </caption>
+              <thead>
+                <tr>
+                  <th scope="col">Atributo</th>
+                  <th scope="col">Significado</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <th scope="row"><code>true</code></th>
+                  <td>
+                    Cada vez que el contenido cambia, anuncia todo el contenido a la vez
+                  </td>
+                </tr>
+                <tr>
+                  <th scope="row"><code>false</code></th>
+                  <td>
+                    Cada vez que el contenido cambia, anuncia sólamente la parte que ha cambiado
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="flow center-vertically">
+            <p><strong>Ejemplo:</strong> Tenemos esta live region donde se va a cambiar el contenido del <code>span</code> de <strong>25 dólares</strong> a <strong>30 dólares</strong></p>
+{% highlight "markup" %}
+<div aria-polite="polite">
+  <p>El total de tu compra es de <span>25 dólares</span></p>
+</div>
+{% endhighlight %}
+            <ul class="flow">
+              <li>
+                Si el atributo <code>aria-atomic</code> es <code>true</code>, al cambiar el contenido se leerá <q>El total de tu compra es de 30 dólares</q>.
+              </li>
+              <li>Si el atributo es <code>false</code>, al cambiar el contenido solo leerá <q>30 dólares</q></li>
+            </ul>
+          </div>
+        </div>
+      </section>
+      <section>
+        <div class="wrapper flow | center-vertically center-horizontally">
+          <p class="text-center fs-500"><b>O al menos en teoría...</b></p>
+          <figure class="flow | text-center">
+
+            <img src="/assets/images/table-aria-atomic.jpg"" alt="Tabla de soporte de la propiedad aria-atomic en lectores de pantalla. El soporte de aria-atomic='false' es parcial al usar JAWS (en todos los navegadores), Talkback y NVDA en Chrome y Edge." data-full-width>
+            <figcaption>
+              <p >Tomado de <a target="_blank" href="https://a11ysupport.io/tech/aria/aria-atomic_attribute">a11ysupport.io (<code>aria-atomic</code>)</a> </p>
+            </figcaption>
+          </figure>
+        </div>
+      </section>
+      <section>
+        <div class="wrapper flow | center-vertically center-horizontally">
+          <h3><code>aria-relevant</code></h3>
+          <p>Determina <strong>el tipo de cambios</strong> que serán anunciados por la live region.</p>
+          <table>
+            <caption>
+              Atributos de
+              <code>aria-relevant</code>
+            </caption>
+            <thead>
+              <tr>
+                <th scope="col">Atributo</th>
+                <th scope="col">Significado</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row"><code>additions</code></th>
+                <td>
+                  Anuncia el contenido cuando se añaden nodos a la live region.
+                </td>
+              </tr>
+              <tr>
+                <th scope="row"><code>text</code></th>
+                <td>
+                  Anuncia el contenido cuando se cambia el contenido.
+                </td>
+              </tr>
+              <tr>
+                <th scope="row"><code>removals</code></th>
+                <td>
+                  Anuncia el contenido cuando se eliminan nodos dentro de la live region.
+                </td>
+              </tr>
+              <tr>
+                <th scope="row"><code>additions text</code></th>
+                <td>
+                  Anuncia cuando se añade tanto texto como nodos a la live region
+                </td>
+              </tr>
+              <tr>
+                <th scope="row"><code>all</code></th>
+                <td>
+                  Anuncia cualquier cambio (el equivalente de escribir <code>additions text removals</code>)
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+      <section>
+        <div class="wrapper flow | center-vertically center-horizontally">
+          <p class="text-center fs-500"><b>O al menos en teoría (otra vez)</b></p>
+          <figure class="flow | text-center">
+
+            <img src="/assets/images/table-aria-relevant.jpg"" alt="Tabla de soporte de la propiedad aria-relevant en lectores de pantalla. Con excepción de 'additions text', el resto de posibles atributos tiene soporte parcial o nulo en distintos lectores de pantalla." data-full-width>
+            <figcaption>
+              <p >Tomado de <a target="_blank" href="https://a11ysupport.io/tests/tech__aria__aria-relevant">a11ysupport.io (<code>aria-relevant</code>)</a> </p>
+            </figcaption>
+          </figure>
+        </div>
+      </section>
+      <section>
+        <div class="wrapper flow | center-vertically center-horizontally">
+          <h2>Tipos de live region</h2>
+          <ul class="flow">
+            <li><code>role="status"</code></li>
+            <li><code>role="alert"</code></li>
+            <li><code>role="log"</code></li>
+            <li><code>output</code></li>
+          </ul>
+          <p>Estos roles de aria tienen valores intrínsecos de <code>aria-live</code>, <code>aria-atomic</code> y <code>aria-relevant</code></p>
+        </div>
+      </section>
+      <section>
+        <div class="wrapper columns">
+          <div class="flow center-vertically">
+            <h3><code>role="status"</code></h3>
+            <p>Provee información importante que no justifica una alerta.</p>
+            <p>Útil para anunciar cambios en pantalla que no requieren la atención inmediata del usuario.</p>
+            <table>
+              <caption>roles implicitos de <code>role="status"</code></caption>
+              <thead>
+                <tr>
+                  <th scope="col">Atributo</th>
+                  <th scope="col">Valor</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <th scope="row"><code>aria-live</code></th>
+                  <td><code>polite</code></td>
+                </tr>
+                <tr>
+                  <th scope="row"><code>aria-atomic</code></th>
+                  <td><code>true</code></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="flow center-vertically">
+{% highlight "markup" %}
+<div role="status">
+  Tu mensaje ha sido enviado
+</div>
+{% endhighlight %}
+            <ul class="flow">
+              <li>Es un rol bastante bien soportado.</li>
+              <li>Va a ser tu herramienta más usada para hacer live regions.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+      <section>
+        <div class="wrapper flow | center-vertically center-horizontally">
+          <p class="text-center fs-500"><b>Sin embargo...</b></p>
+          <figure class="flow | text-center">
+
+            <img src="/assets/images/table-aria-atomic.jpg"" alt="Tabla de soporte de role='status' en lectores de pantalla. Firefox no tiene el valor implícito de aria-atomic='true' cuando se usa en Firefox (con JAWS y NVDA), con Orca y con TalkBack" data-full-width>
+            <figcaption>
+              <p >Tomado de <a target="_blank" href="https://a11ysupport.io/tests/tech__aria__status-role-named">a11ysupport.io (<code>role="status"</code>)</a> </p>
+            </figcaption>
+          </figure>
+{% highlight "markup" %}
+<div role="status" aria-atomic="true">
+  Tu mensaje ha sido enviado
+</div>
+{% endhighlight %}
+        </div>
+      </section>
+      <section>
+        <div class="wrapper columns">
+          <div class="flow center-vertically">
+            <h3><code>role="alert"</code></h3>
+            <p>Es usado para dar información importante <strong>y que requiere atención inmediata.</strong></p>
+            <table>
+              <caption>roles implicitos de <code>role="alert"</code></caption>
+              <thead>
+                <tr>
+                  <th scope="col">Atributo</th>
+                  <th scope="col">Valor</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <th scope="row"><code>aria-live</code></th>
+                  <td><code>assertive</code></td>
+                </tr>
+                <tr>
+                  <th scope="row"><code>aria-atomic</code></th>
+                  <td><code>true</code></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="flow center-vertically">
+{% highlight "markup" %}
+<div role="alert">
+  Tus cambios no fueron guardados debido a un error de conexión. Por favor intenta de nuevo.
+</div>
+{% endhighlight %}
+            <ul class="flow">
+              <li>Tiene muy buen soporte y ninguna excepción importante.</li>
+              <li>Es una herramienta importante pero debe usarse con precaución.</li>
+              <li>Si requiere interacción usar <code>role="alertdialog"</code> en su lugar</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+      <section>
+        <div class="wrapper columns">
+          <div class="flow center-vertically">
+            <h3><code>role="log"</code></h3>
+            <p>Es una región donde nueva información es añadida y puede que la anterior desaparezca</p>
+            <table>
+              <caption>roles implicitos de <code>role="log"</code></caption>
+              <thead>
+                <tr>
+                  <th scope="col">Atributo</th>
+                  <th scope="col">Valor</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <th scope="row"><code>aria-live</code></th>
+                  <td><code>polite</code></td>
+                </tr>
+                <tr>
+                  <th scope="row"><code>aria-atomic</code></th>
+                  <td><code>false</code></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="flow center-vertically">
+{% highlight "markup" %}
+<div role="log">
+  <ul aria-label="Message story">
+    <li>
+      <span>Gabrielle: </span> Hola, soy Gabriela, ¿cómo puedo ayudarte?
+    </li>
+    <li>
+      <span>Diana: </span> Hola, soy Diana. Necesito cancelar mi cita
+    </li>
+  </ul>
+</div>
+{% endhighlight %}
+            <ul class="flow">
+              <li>Tiene muy buen soporte <strong>Excepto cuando combinas Narrator y Microsoft Edge.</strong></li>
+              <li>No es tan común como <code>role="status"</code> o <code>role="alert"</code> pero es importante conocer su existencia.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+      <section>
+        <div class="wrapper columns">
+          <div class="flow center-vertically">
+            <h3><code>output</code></h3>
+            <p>Es una región que se usa para exponer resultados de un cálculo o una acción hecha por el usuario</p>
+            <table>
+              <caption>atributos de <code>output</code></caption>
+              <thead>
+                <tr>
+                  <th scope="col">Atributo</th>
+                  <th scope="col">Descripción</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <th scope="row"><code>for</code></th>
+                  <td>Es la lista de ids de elementos que están relacionados con el cálculo / resultado</td>
+                </tr>
+                <tr>
+                  <th scope="row"><code>form</code></th>
+                  <td>Relaciona el elemento con un formulario. Solo es necesario si usas output <strong>fuera</strong> de su respectivo elemento <code>form</code></td>
+                </tr>
+                <tr>
+                  <th scope="row"><code>name</code></th>
+                  <td>El nombre del elemento (funciona igual a como se usaría con cualquier <code>input</code>)</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="flow center-vertically">
+{% highlight "markup" %}
+<form>
+  <input type="number" id="b" name="b" value="1" /> +
+  <input type="number" id="a" name="a" value="3" /> =
+  <output name="result" for="a b">4</output>
+</form>
+{% endhighlight %}
+{% highlight "markup" %}
+<form action="/results" role="search" id="search-form">
+  <label for="search-input">Search articles</label>
+  <input type="search" id="search-input" />
+  <input type="submit" value="Submit search" />
+</form>
+<p>Hay <output for="search" form="search-form">4</output> artículos disponibles.</p>
+{% endhighlight %}
+          </div>
+        </div>
+      </section>
+      <section>
+        <div class="wrapper flow | center-vertically">
+          <h2 class="text-center">Herramientas de frameworks de JavaScript</h2>
+          <ul role="list" class="switcher">
+            <li class="flow center-vertically">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/Angular_full_color_logo.svg/2048px-Angular_full_color_logo.svg.png" alt="Logo de Angular">
+              <p class="text-center fs-400"><code>LiveAnnouncer</code></p>
+            </li>
+            <li class="flow center-vertically">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/Vue.js_Logo_2.svg/512px-Vue.js_Logo_2.svg.png?20170919082558" alt="Logo de Vue">
+              <p class="text-center fs-400">Live utils</p>
+            </li>
+            <li class="flow center-vertically">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/React-icon.svg/2300px-React-icon.svg.png" alt="Logo de React">
+              <p class="text-center fs-400"><code>react-a11y-announcer</code></p>
+            </li>
+          </ul>
+        </div>
+      </section>
+      <section>
+        <div class="wrapper flow | center-vertically center-horizontally">
+          <p class="text-center fs-500"><b>El escenario</b></p>
+          <p>Habrá un botón que al hacer click añadirá el mensaje "¡Tu compra ha sido exitosa!" dentro de una live-region</p>
+          <p class="fs-400"><b>Reglas:</b></p>
+          <ul class="flow">
+            <li>Voy a hacer el ejemplo estrictamente como lo menciona la documentación de la respectiva herramienta.</li>
+            <li>Revisaré el markup generado y evaluaré si es capaz de crear live regiosn tanto de forma <code>polite</code> como <code>assertive</code>.</li>
+          </ul>
+        </div>
+      </section>
+      <section>
+        <div class="wrapper flow">
+          <h3 class="text-center"><code>LiveAnnouncer</code> - Angular</h3>
+          <p class="text-center">Parte del paquete de <a target="_blank" href="https://material.angular.io/cdk/a11y/overview">Angular Material</a></p>
+          <div class="columns">
+            <div class="flow">
+              <figure class="flow">
+{% highlight "markup" %}
+<div>
+  <h1>Región aria-live con <code>LiveAnnouncer</code></h1>
+  <button (click)="announce()">Completa tu compra</button>
+</div>
+{% endhighlight %}
+                <figcaption>
+                  <p><code>app.component.html</code></p>
+                </figcaption>
+              </figure>
+            </div>
+            <div class="flow">
+              <figure class="flow">
+{% highlight "js" %}
+import { Component } from "@angular/core";
+import { LiveAnnouncer } from "@angular/cdk/a11y";
+
+@Component({
+  selector: "app-root",
+  templateUrl: "./app.component.html",
+})
+export class AppComponent {
+  constructor(private announcer: LiveAnnouncer) {}
+
+  public announce() {
+    this.announcer.announce("¡Tu compra ha sido exitosa!");
+  }
+}
+{% endhighlight %}
+                <figcaption>
+                  <p><code>app.components.ts</code></p>
+                </figcaption>
+              </figure>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section>
+        <div class="wrapper columns">
+          <div class="flow">
+{% highlight "markup" %}
+<div
+  class="cdk-live-announcer-element cdk-visually-hidden"
+  aria-atomic="true"
+  aria-live="polite"
+  id="cdk-live-announcer-6"></div>
+{% endhighlight %}
+            <p>Al hacer click al botón...</p>
+{% highlight "markup" %}
+<div
+  class="cdk-live-announcer-element cdk-visually-hidden"
+  aria-atomic="true"
+  aria-live="polite"
+  id="cdk-live-announcer-6">
+  ¡Tu compra ha sido exitosa!
+</div>
+{% endhighlight %}
+          </div>
+          <div class="flow">
+            <p>Para crear una región <code>assertive</code></p>
+{% highlight "js" %}
+public announce() {
+  this.announcer.announce("¡Tu compra ha sido exitosa!", "assertive");
+}
+{% endhighlight %}
+            <p>Lo que da como resultado</p>
+{% highlight "markup" %}
+<div
+  class="cdk-live-announcer-element cdk-visually-hidden"
+  aria-atomic="true"
+  aria-live="assertive"
+  id="cdk-live-announcer-6">
+  ¡Tu compra ha sido exitosa!
+</div>
+{% endhighlight %}
+          </div>
+        </div>
+      </section>
+      <section>
+        <div class="wrapper flow | center-vertically center-horizontally">
+          <p class="fs-500 text-center"><b>Resultados:</b></p>
+          <ul class="flow">
+            <li>Crea regiones tanto de forma <code>polite</code> como <code>assertive</code>.</li>
+            <li>
+              La región puede estar visible o puede estar oculta de forma visual.
+            </li>
+            <li>
+              Sin embargo, la falta de <code>role="status"</code> o <code>role="alert"</code> puede ser inconveniente si necesitas dar ese contexto a usuarios de lectores de pantalla.
+            </li>
+          </ul>
+        </div>
+      </section>
+      <section>
+        <div class="wrapper flow | center-vertically center-horizontally">
+          <p class="fs-500 text-center">Nada mal, Angular, nada mal...</p>
+          <img src="/assets/images/darcy.png"" alt="Darcy de la serie Amphibia con ambos pulgares arriba mientras dice 'Gold star for you, bud.'" data-full-width>
+        </div>
+      </section>
+      <section>
+        <div class="wrapper flow">
+          <h3 class="text-center">Live utils - Vue</h3>
+          <p class="text-center">Parte del paquete de <a target="_blank" href="https://jinjiang.dev/vue-a11y-utils/">Vue A11y utils</a></p>
+          <div class="columns">
+            <div class="flow">
+              <figure class="flow">
+{% highlight "js" %}
+<template>
+  <h1>Ejemplo de live region con Live Utils</h1>
+  <button @click="announce(message, isAssertive)">
+    Completa tu compra.
+  </button>
+</template>
+
+<script setup>
+  import { ref } from "vue";
+  import { useLive } from "vue-a11y-utils";
+  const message = ref("Your purchase has been successful");
+  const isAssertive = ref(false);
+  const [announce] = useLive();
+</script>
+{% endhighlight %}
+                <figcaption>
+                  <p><code>LiveExample.vue</code></p>
+                </figcaption>
+              </figure>
+            </div>
+            <div class="flow">
+              <figure class="flow">
+{% highlight "js" %}
+<template>
+  <Live>
+    <live-example />
+  </Live>
+</template>
+
+<script setup>
+  import { VueLive } from "vue-a11y-utils";
+  import LiveExample from "@/components/LiveExample.vue";
+</script>
+{% endhighlight %}
+                <figcaption>
+                  <p><code>App.vue</code></p>
+                </figcaption>
+              </figure>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section>
+        <div class="wrapper flow | center-vertically center-horizontally">
+          <p class="text-center fs-500">Hay un error en la documentación...</p>
+{% highlight "markup" %}
+“export 'VueLive' (imported as 'VueLive') was not found in 'vue-a11y-utils'
+(possible exports: FocusTrap, Live, ariaToAttrs, directiveAria, genId,
+getTabindexByRole, useGlobalHotkey, useHotkey, useLive, useTravel)”
+{% endhighlight %}
+
+          <figure class="flow">
+{% highlight "js" %}
+<script setup>
+  import { Live } from "vue-a11y-utils";
+  import LiveExample from "@/components/LiveExample.vue";
+</script>
+{% endhighlight %}
+            <figcaption>
+              <p><code>App.vue</code></p>
+            </figcaption>
+          </figure>
+        </div>
+      </section>
+      <section>
+        <div class="wrapper flow | center-vertically center-horizontally">
+{% highlight "markup" %}
+<div style="
+    position: absolute;
+    height: 1px;
+    width: 1px;
+    margin: -1px;
+    clip: rect(0px, 0px, 0px, 0px);
+    overflow: hidden;
+  ">
+  <div role="log" aria-live="assertive" aria-busy="false"></div>
+  <div role="log" aria-live="assertive" aria-busy="false"></div>
+  <div role="log" aria-live="polite" aria-busy="false"></div>
+  <div role="log" aria-live="polite" aria-busy="false"></div>
+</div>
+{% endhighlight %}
+          <p class="fs-500 text-center">¿?</p>
+        </div>
+      </section>
+      <section>
+        <div class="wrapper flow | center-vertically center-horizontally">
+          <p class="fs-500 text-center"><b>Resultados:</b></p>
+          <ul class="flow">
+            <li>El markup que genera es confuso.</li>
+            <li>
+              Es capaz de generar live regions <code>polite</code> y <code>assertive</code>, pero el hecho de que usen <code>role="log"</code> hace que sea menos útil.
+            </li>
+            <li>
+              Que esté oculto visualmente le quita utilidad porque en muchos casos vas a querer que también genere feedback visual.
+            </li>
+          </ul>
+          <p class="fs-400 text-center">A nivel personal <strong>no usaría Live utils</strong> para generar live regions.</p>
+        </div>
+      </section>
+      <section>
+        <div class="wrapper flow">
+          <h3 class="text-center"><strong>react-a11y-announcer</strong> - React</h3>
+          <p class="text-center">Dependencia creada por Think Company. <a target="_blank" href="https://www.npmjs.com/package/react-a11y-announcer">Documentación <code>react-a11y-announcer</code></a></p>
+{% highlight "js" %}
+import Announcer from 'react-a11y-announcer';
+
+export default function App() {
+
+  const [announcement, setAnnouncement] = React.useState("")
+  
+  const handleClick = () => {setAnnouncement("¡Tu compra ha sido exitosa!")}
+  
+  return (
+    <div className="App">
+      <h1>Prueba de <code>react-a11y-announcer</code></h1>
+      <button onClick={handleClick}>Completa tu compra</button>
+      <Announcer text={announcement} />
+    </div>
+  );
+}
+{% endhighlight %}
+        </div>
+      </section>
+      <section>
+        <div class="wrapper flow | center-vertically center-horizontally">
+{% highlight "markup" %}
+<div
+  aria-atomic="true"
+  aria-live="polite"
+  style="
+    position: absolute;
+    visibility: visible;
+    overflow: hidden;
+    display: block;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    border: 0px;
+    padding: 0px;
+    clip: rect(0px, 0px, 0px, 0px);
+    clip-path: polygon(0px 0px, 0px 0px, 0px 0px, 0px 0px);
+    white-space: nowrap;
+  ">
+  <p>¡Tu compra ha sido exitosa</p>
+</div>
+{% endhighlight %}
+        </div>
+      </section>
+      <section>
+        <div class="wrapper flow | center-vertically center-horizontally">
+          <p class="fs-500 text-center"><b>Resultados:</b></p>
+          <ul class="flow">
+            <li>
+              El acercamiento es similar a Live Utils de Vue, sin embargo este <strong>sólamente crea live regions <code>polite</code></strong>
+            </li>
+            <li>
+              Esto lo hace una opción aun menos flexible para crear live regions.
+            </li>
+            <li>
+              Esto en conjunto hace que solo se pueda usar para un caso concreto, lo que no amerita descargar esta librería.
+            </li>
+          </ul>
+          <p class="fs-400 text-center"><b>Sin embargo...</b></p>
+        </div>
+      </section>
+      <section>
+        <div class="wrapper flow | center-vertically center-horizontally">
+          <p>Es posible agregar props al componente <code>Announcer</code></p>
+{% highlight "js" %}
+<Announcer text={announcement} role="alert" aria-live="assertive" className="status" />
+{% endhighlight %}
+          <p>Esto añade más flexibilidad, pero a la vez me hace dudar más de si debería usar esta dependencia.</p>
+          <p>Esto <strong>no</strong> está en la documentación de <code>react-a11y-announcer</code>.</p>
+        </div>
+      </section>
+      <section>
+        <div class="wrapper flow | center-vertically center-horizontally">
+          <p class="fs-400"><b>Reglas:</b></p>
+          <ul class="flow">
+            <li><mark>Voy a hacer el ejemplo estrictamente como lo menciona la documentación de la respectiva herramienta.</mark></li>
+            <li>Revisaré el markup generado y evaluaré si es capaz de crear live regiosn tanto de forma <code>polite</code> como <code>assertive</code>.</li>
+          </ul>
+        </div>
+      </section>
+      <section>
+        <div class="wrapper flow | center-vertically center-horizontally">
+          <p class="fs-500 text-center">Esto no se trata de desprestigiar el esfuerzo que hacen otras personas para crear herramientas de accesibilidad.</p>
+        </div>
+      </section>
+      <section>
+        <div class="wrapper flow | center-vertically center-horizontally">
+          <p class="text-center fs-400">
+            Pero es importante testear estas herramientas para ver si dan el resultado deseado.
+          </p>
+          <p>Por eso mismo:</p>
+          <ul class="flow">
+            <li>Aprende los fundamentos de accesibilidad.</li>
+            <li>Nunca confíen. Siempre hagan pruebas.</li>
+          </ul>
+        </div>
+      </section>
+      <section>
+        <div class="wrapper flow | center-vertically center-horizontally">
+          <img src="/assets/images/the-end.png"" alt="Pantalla de fin de la historia del juego Shovel Knight: Specter of Torment" data-full-width>
+          <p class="text-center fs-500"><b>¡Gracias!</b></p>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>
